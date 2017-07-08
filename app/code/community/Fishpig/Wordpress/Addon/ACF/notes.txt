@@ -1,0 +1,70 @@
+##
+# Advanced Custom Fields / Magento WordPress Integration
+#
+# Author: FishPig Limited (Ben Tideswell)
+# URL: https://fishpig.co.uk/magento/wordpress-integration/advanced-custom-fields/
+##
+
+06/07/2017 - v1.4.0.17
+- Fixed issue with sub-fields having same names.
+
+25/06/2017 - v1.4.0.14
+- Fixed issue with Page Link field type. Previously this only work for page to page relationships but it should now work for any post type.
+
+21/06/2017 - v1.4.0.14
+- Fixed issue with flexible content inside a repeater field.
+
+03/02/2017 - v1.4.0.12
+- Fixed issue with using flexible content field type for options page
+
+01/11/2016 - v1.4.0.11
+- Fixed issue with ACF Pro and Options
+
+13/09/2016 - v1.4.0.10
+- Fixed issue that stopped the extension from loading and showing in the Admin.
+
+09/09/2016 - v1.4.0.9
+- Fixed issue that stopped the extension working with ACF Pro
+
+10/03/2016 - v1.4.0.7
+- Fixed issue that broke the getTermValue method when calling multiple times.
+
+27/01/2016 - v1.4.0.5
+- Added the 'wordpress_addon_acf_field_get_renderer' event to Fishpig_Wordpress_Addon_ACF_Model_Field::render. This allows you to define your own field rendering objects.
+
+10/12/2015 - v1.4.0.3
+- Added Wysiwyg renderer object so that the value is converted to HTML (p tags are added automatically).
+
+22/07/2015 - v1.4.0.1
+- Added Fishpig_Wordpress_Addon_ACF_Helper_Data::getTermValue($key, $term) method that allows you to get custom field values for term's (this includes terms that belong to custom taxonomies as well as default taxonomies). This can be used as follows:
+- Mage::helper('wp_addon_acf')->getTermValue('my_custom_field', $term)
+
+26/06/2015 - v1.4.0.0
+- Added support for ACF Free and ACF Pro
+
+12/06/2015 - v1.3.0.5
+- Fixed Page Link field type for compatibility with Magento WordPress Integration v4.0
+
+01/06/2015 - v1.3.0.4
+- Fixed options repeater/image issue
+
+01/06/2015 - v1.3.0.3
+- Fixed error in Flexible Content field type
+
+20/05/2015 - v1.3.0.1
+- Fixed options fields in ACF Pro
+
+23/04/2015 - v1.3.0.0
+- Now supports ACF Pro rather than the free ACF
+
+20/08/2014 - v1.2.5.1
+- Added support for repeater fields in options pages
+
+29/06/2014 - v1.2.5.0
+- Improved the field integration
+
+27/06/2014 - v1.2.4.0
+- Added better support for the Flexible Content field
+
+10/03/2014 - v1.2.3.0
+- Bug fix for repeater fields embedded in repeater fields
