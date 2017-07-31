@@ -15,7 +15,9 @@ class Fishpig_Wordpress_Addon_ACF_Model_Field_Renderer_Post_Object extends Fishp
 	 */
 	protected function _render()
 	{
-		if ($value = $this->getValue()) {
+		$value = $this->getValue();
+
+		if ($value && !is_object($value)) {			
 			$this->setValue(false);
 
 			if (is_array($value)) {
@@ -25,6 +27,9 @@ class Fishpig_Wordpress_Addon_ACF_Model_Field_Renderer_Post_Object extends Fishp
 					->addFieldToFilter('main_table.ID', array('IN' => $value));
 
 				$this->setValue($posts);
+			}
+			else if ('id' === $this->getField()->getReturnFormat()) {
+				$this->setValue((int)$value);
 			}
 			else {
 				$post = Mage::getModel('wordpress/post')->setPostType('*')->load((int)$value);
