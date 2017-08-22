@@ -90,23 +90,6 @@ class Fishpig_Wordpress_Addon_ACF_Helper_Core extends Mage_Core_Helper_Abstract
 			if (function_exists('__')) {
 				__('X'); // Ensure Magento translation files are included
 			}
-
-			// Apply file patches
-			if (false) {
-				if ($patches = Mage::getConfig()->getNode('wordpress/core/modules/wp_addon_acf/patch')) {
-					$pluginDir = $path . 'wp-content' . DS . 'plugins' . DS;
-					
-					foreach((array)$patches->asArray() as $patchType => $file) {
-						if ($patchType === 'translation') {
-							$filesToPatch = explode(',', trim((string)$file, ','));
-							
-							foreach($filesToPatch as $fileToPatch) {
-								$this->_patchFileTranslation($fileToPatch);
-							}
-						}
-					}
-				}
-			}
 			
 			// This loads Zend_Log before WP loads in case we need it			
 			$this->_handlePotentialMissingIncludes();

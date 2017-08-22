@@ -9,7 +9,7 @@
    <description>Utilise the Advanced Custom Fields WordPress plugin in your integrated Magento blog.</description>
    <license>FishPig EULA</license>
    <license_uri>http://fishpig.co.uk/license.txt</license_uri>
-   <version>1.4.0.19</version>
+   <version>2.0.0.0</version>
    <stability>stable</stability>
    <notes>For changes, please see https://fishpig.co.uk/magento/wordpress-integration/advanced-custom-fields/#changelog</notes>
    <authors>

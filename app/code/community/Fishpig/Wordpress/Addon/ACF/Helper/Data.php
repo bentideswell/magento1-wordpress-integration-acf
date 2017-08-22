@@ -9,139 +9,143 @@
 class Fishpig_Wordpress_Addon_ACF_Helper_Data extends Fishpig_Wordpress_Helper_Abstract
 {
 	/**
-	 * Cache of ACF field models
 	 *
-	 * @var array
+	 * @const string
 	 */
-	protected $_fields = array();
+	const PLUGIN_FILE_PRO = 'advanced-custom-fields-pro/acf.php';
+	const PLUGIN_FILE_FREE = 'advanced-custom-fields/acf.php';
 	
 	/**
-	 * Determine whether the extension is enabled
+	 * Determine whether the plugin is enabled in WordPress
 	 *
-	 * @return bool
+	 * @return string
 	 */
 	public function isEnabled()
 	{
-		return $this->isProVersion() || $this->isFreeVersion();
+		$pluginHelper = Mage::helper('wordpress/plugin');
+		
+		return $pluginHelper->isEnabled(self::PLUGIN_FILE_PRO) || $pluginHelper->isEnabled(self::PLUGIN_FILE_FREE);
 	}
 
 	/**
-	 * Is ACF Pro enabled
 	 *
-	 * @return bool
+	 *
 	 */
-	public function isProVersion()
+	public function getField($key, $scope = null)
 	{
-		return Mage::helper('wordpress')->isPluginEnabled('advanced-custom-fields-pro/acf.php')
-			|| Mage::helper('wordpress')->isPluginEnabled('acf-pro/acf.php');
-	}
+		$value = null;
 
-	/**
-	 * Is ACF Free enabled
-	 *
-	 * @return bool
-	 */	
-	public function isFreeVersion()
-	{
-		return Mage::helper('wordpress')->isPluginEnabled('advanced-custom-fields/acf.php');
-	}
-	
-	/**
-	 * Retrieve an ACF value using a custom ACF options page
-	 *
-	 * @param string $key
-	 * @return mixed
-	 */
-	public function getOptionValue($key)
-	{
-		return $this->getValue($key, 'options');
-	}
-	
-	/**
-	 * Retrieve an ACF value for a category
-	 *
-	 * @param string $key
-	 * @param Fishpig_Wordpress_Model_Post_Category $category
-	 * @return mixed
-	 */
-	public function getTermValue($key, Fishpig_Wordpress_Model_Term $term)
-	{
-		return $this->getValue($key, $term->getTaxonomy() . '_' . $term->getId());
-	}
-	
-	/**
-	 * Deprecated method. See self::getTermValue for new method
-	 *
-	 * @param string $key
-	 * @param Varien_Object $term
-	 * @return mixed
-	 */
-	public function getCategoryValue($key, $term)
-	{
-		return @$this->getTermValue($key, $term);
-	}
-	
-	/**
-	 * Retrieve an ACF value using a custom ACF options page
-	 *
-	 * @param string $key
-	 * @return mixed
-	 */
-	public function getValue($key, $scope)
-	{
-		if (($field = $this->_getField($key, $scope)) !== false) {
-			return $field->setScope($scope)
-				->setOriginalKey($key)
-				->setValue($this->getWpOption($scope . '_' . $key))
-				->render();
+		try {
+			// Get the core helper
+			$coreHelper = Mage::helper('wp_addon_acf/core');
+			
+			// start the simulation
+			$coreHelper->startWordPressSimulation();
+
+			if (function_exists('get_field')) {
+				$value = get_field($key, $scope);
+			}
+		}
+		catch (Exception $e) {
+			Mage::helper('wordpress')->log($e->getMessage());
 		}
 		
-		return false;
-	}
-	
-	/**
-	 * Retrieve a ACF value
-	 * This is called via an observer
-	 *
-	 * @param Varien_Event_Observer $observer
-	 * @return $this
-	 */
-	public function getAcfValueObserver(Varien_Event_Observer $observer)
-	{
-		$post = $observer->getEvent()->getObject();
+		// End the WordPress simulation
+		$coreHelper->endWordPressSimulation();
 		
-		if (!$this->isEnabled() || !$post) {
-			return false;
-		}
+		return $this->_fixFieldReturn($value);
+	}
 
+	/**
+	 *
+	 *
+	 */
+	public function getPostValueObserver(Varien_Event_Observer $observer)
+	{
+		$observer->getEvent()->getMeta()->setValue(
+			$this->getField(
+				$observer->getEvent()->getMeta()->getKey()
+			)
+		);
+		
+		return $this;	
+	}
+
+	/**
+	 *
+	 *
+	 */
+	public function getTermValueObserver(Varien_Event_Observer $observer)
+	{
+		$term = $observer->getEvent()->getObject();
 		$meta = $observer->getEvent()->getMeta();
 
-		if (($field = $this->_getField($meta->getKey(), null, $post)) !== false) {
-			$meta->setValue(
-				$field->setPost($post)->setKey($meta->getKey())->setValue($meta->getValue())->render()
-			);
-		}
+		$meta->setValue(
+			$this->getField(
+				$meta->getKey(),
+				$term->getTaxonomy() . '_' . $term->getId()
+			)
+		);
 		
 		return $this;
 	}
-		
+	
 	/**
-	 * Retrieve a field by it's meta_key and cache it
 	 *
-	 * @param string $key
-	 * @return false|Fishpig_Wordpress_Addon_ACF_Model_Field
+	 *
 	 */
-	protected function _getField($key, $scope = null, $post = null)
+	protected function _fixFieldReturn($value)
 	{
-		$field = Mage::getModel('wp_addon_acf/field')
-			->setScope($scope)
-			->setPost($post)
-			->load($key);
-
-		if ($field->getId()) {
-			return $field;
+		if ($value) {
+			if (is_array($value)) {
+				foreach($value as $k => $v) {
+					$value[$k] = $this->_fixFieldReturn($v);
+				}
+			}
+			else if (is_object($value)) {
+				$class = get_class($value);
+				
+				if ($class === 'WP_Post') {
+					$value[$k] = $value = Mage::getModel('wordpress/post')->load($value->ID)->setWpPostObject($value);
+				}
+				else {
+//					exit('Class not transposed: ' . get_class($value));
+				}
+			}
 		}
 
-		return false;
+		return $value;
+	}
+	
+	/**
+	 * @deprecated 2.0.0.0
+	 */
+	public function getOptionValue($key)
+	{
+		return $this->getField($key, 'options');
+	}
+	
+	/**
+	 * @deprecated 2.0.0.0
+	 */
+	public function getTermValue($key, Fishpig_Wordpress_Model_Term $term)
+	{
+		return $this->getField($key, $term->getTaxonomy() . '_' . $term->getId());
+	}
+	
+	/**
+	 * @deprecated 2.0.0.0
+	 */
+	public function getCategoryValue($key, $term)
+	{
+		return $this->getTermValue($key, $term);
+	}
+	
+	/**
+	 * @deprecated 2.0.0.0
+	 */
+	public function getValue($key, $scope)
+	{
+		return $this->getField($key, $scope);
 	}
 }
