@@ -64,7 +64,8 @@ class Fishpig_Wordpress_Addon_ACF_Helper_Data extends Fishpig_Wordpress_Helper_A
 	{
 		$observer->getEvent()->getMeta()->setValue(
 			$this->getField(
-				$observer->getEvent()->getMeta()->getKey()
+				$observer->getEvent()->getMeta()->getKey(),
+				$observer->getEvent()->getObject()->getId()
 			)
 		);
 		
@@ -106,10 +107,10 @@ class Fishpig_Wordpress_Addon_ACF_Helper_Data extends Fishpig_Wordpress_Helper_A
 				$class = get_class($value);
 				
 				if ($class === 'WP_Post') {
-					$value[$k] = $value = Mage::getModel('wordpress/post')->load($value->ID)->setWpPostObject($value);
+					$value = Mage::getModel('wordpress/post')->load($value->ID)->setWpPostObject($value);
 				}
 				else {
-//					exit('Class not transposed: ' . get_class($value));
+					Mage::helper('wordpress')->log('Class not transposed: ' . get_class($value));
 				}
 			}
 		}

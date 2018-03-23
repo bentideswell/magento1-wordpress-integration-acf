@@ -253,78 +253,7 @@ class Fishpig_Wordpress_Addon_ACF_Helper_Core extends Mage_Core_Helper_Abstract
 		
 		return $this;
 	}
-	
-	/**
-	 * Get includes using path
-	 *
-	 * @param string $path
-	 * @return false|array
-	 */
-	public function getIncludesUsingPath($path)
-	{
-		if (($html = $this->getHtml()) === false) {
-			return false;
-		}
-
-		if (is_array($path)) {
-			$path = implode('|', $path);			
-		}
-
-		if (preg_match_all('/<(script|link)[^>]+(href|src)=[\'"]{1}([^\'"]{1,}(' . preg_quote($path, '/') . '.)*)[\'"]{1}/U', $html, $matches)) {
-			return array_combine($matches[3], $matches[1]);
-		}
 		
-		return false;
-	}
-	
-	public function getExternalFileTagsUsingPath($path)
-	{
-		if (($html = $this->getHtml()) === false) {
-			return false;
-		}
-
-		if (preg_match_all('/<(script|link)[^>]+(href|src)=[\'"]{1}([^\'"]{1,}' . preg_quote($path, '/') . '.*)[\'"]{1}[^>]{0,}>/U', $html, $matches)) {
-			foreach($matches[0] as $it => $match) {
-				if ($matches[1][$it] === 'script') {
-					$matches[0][$it] = $match . '</script>';
-				}
-			}
-			
-			return $matches[0];
-		}
-		
-		return false;
-	}
-	
-	/**
-	 * Get includes using path
-	 *
-	 * @param string $path
-	 * @return false|array
-	 */
-	public function getIncludesUsingPathWithDetails($path)
-	{
-		if (($html = $this->getHtml()) === false) {
-			return false;
-		}
-
-		if (preg_match_all('/<(script|link)[^>]+(href|src)=[\'"]{1}([^\'"]{1,}' . preg_quote($path, '/') . '.*)[\'"]{1}[^>]{0,}>/U', $html, $matches)) {
-			$includes = array();
-
-			foreach($matches[3] as $it => $file) {
-				$tag = substr(trim($matches[0][$it], '/<>'), strlen($matches[1][$it]));
-				
-				if (preg_match_all('/ ([a-zA-Z0-9]{1,})=[\'"]{1}([^\'"]{1,})[\'"]{1}/', $tag, $params)) {
-					$includes[$file] = array_combine($params[1], $params[2]);
-				}
-			}
-			
-			return $includes;
-		}
-		
-		return false;
-	}
-	
 	/**
 	 * Start the WordPress simulation and store the environment vars
 	 *
@@ -402,28 +331,6 @@ class Fishpig_Wordpress_Addon_ACF_Helper_Core extends Mage_Core_Helper_Abstract
 	}
 	
 	/**
-	 * Get the wp_head() and wp_footer() content
-	 *
-	 * @return string
-	 **/
-	public function getWpHeadAndWpFooter()
-	{
-		$this->startWordPressSimulation();
-
-		ob_start();
-
-		wp_head();
-		wp_footer();
-		
-		$html = trim(ob_get_clean());
-		
-		$this->endWordPressSimulation();
-
-		return $html;
-	}
-	
-	
-	/**
 	 * Ensure required classes are included
 	 *
 	 * @return $this
@@ -442,65 +349,5 @@ class Fishpig_Wordpress_Addon_ACF_Helper_Core extends Mage_Core_Helper_Abstract
 		}
 		
 		return $this;
-	}
-	
-	/**
-	 * Patch $file
-	 *
-	 * @param string $file
-	 * @return $this
-	**/
-	protected function _patchFileTranslation($file)
-	{
-		$cacheDir = Mage::getBaseDir('var') . DS . 'cache' . DS . 'wp' . DS . 'transpatched';
-
-		if (!is_dir($cacheDir)) {
-			@mkdir(dirname($cacheDir));
-			@mkdir($cacheDir);
-		}
-
-		if (!is_dir($cacheDir)) {
-			return $this;
-		}
-		
-		// Add plugin dir to file
-		$file = Mage::helper('wordpress')->getWordPressPath() . 'wp-content' . DS . 'plugins' . DS . $file;
-		
-		// If plugin file does not exist, create cache file and return
-		if (!is_file($file)) {
-			touch($cachedFile);
-			return $this;
-		}
-
-		$cachedFile = $cacheDir . DS . md5($file . filemtime($file));
-		
-		if (is_file($cachedFile)) {
-			return $this;
-		}
-
-		if ($data = file_get_contents($file)) {
-			$ws = '[\s]{0,}'; // Matches white space
-			$quoted = '([\'"]{1})([^\%d]{1,})\%d'; // Matches a quoted string
-			$pattern = '[^a-z0-9_]{1}__\(' . $ws . sprintf($quoted, 1, 1) . $ws . ',' . $ws .  sprintf($quoted, 3, 3) . $ws . '\)';
-			$changed = false;
-			
-			if (preg_match_all('/' . $pattern . '/Us', $data, $matches)) {
-				foreach($matches[0] as $mkey => $match) {
-					if (strpos($match, '%s') !== false) {
-						$data = str_replace($match, str_replace($matches[4][$mkey], '%s', $match), $data);
-						$changed = true;
-					}
-				}
-			}
-			
-			if ($changed) {
-				file_put_contents($file, $data);
-			}
-			
-			// Create cached file even if not changed to stop checking next time
-			touch($cacheDir . DS . md5($file . filemtime($file)));
-		}
-		
-		return $this;
-	}
+	}	
 }

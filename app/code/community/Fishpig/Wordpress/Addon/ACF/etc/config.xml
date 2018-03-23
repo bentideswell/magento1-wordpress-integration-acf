@@ -2,7 +2,7 @@
 <config>
 	<modules>
 		<Fishpig_Wordpress_Addon_ACF>
-			<version>2.0.0.0</version>
+			<version>2.0.0.2</version>
 			<fishpig>
 				<name>Advanced Custom Fields</name>
 				<id>advanced-custom-field</id>
@@ -51,31 +51,4 @@
 			</wordpress_term_get_meta_value>
 		</events>
 	</global>
-	<fishpig>
-		<injection>
-			<Fishpig_Inject_Wordpress_Block_System_Config_Form_Field_License>
-				<Fishpig_Wordpress_Addon_ACF>
-					<Block_System_Config_Form_Field_License><ignore /></Block_System_Config_Form_Field_License>
-				</Fishpig_Wordpress_Addon_ACF>
-			</Fishpig_Inject_Wordpress_Block_System_Config_Form_Field_License>
-			<Fishpig_Inject_Wordpress_Helper_License>
-				<Fishpig_Wordpress_Addon_ACF>
-					<Helper_License><ignore /></Helper_License>
-				</Fishpig_Wordpress_Addon_ACF>
-			</Fishpig_Inject_Wordpress_Helper_License>
-			<Fishpig_Inject_Wordpress_Helper_Core>
-				<Fishpig_Wordpress_Addon_ACF>
-					<Helper_Core><ignore /></Helper_Core>
-				</Fishpig_Wordpress_Addon_ACF>
-			</Fishpig_Inject_Wordpress_Helper_Core>
-		</injection>
-		<encode>
-			<helper_core>app/code/community/Fishpig/Wordpress/Addon/ACF/Helper/Core.php</helper_core>
-			<helper_license>app/code/community/Fishpig/Wordpress/Addon/ACF/Helper/License.php</helper_license>
-			<helper_data>app/code/community/Fishpig/Wordpress/Addon/ACF/Helper/Data.php</helper_data>
-			<observer>app/code/community/Fishpig/Wordpress/Addon/ACF/Model/Observer.php</observer>
-			<observer_plugin_abstract>app/code/community/Fishpig/Wordpress/Addon/ACF/Model/Observer/Plugin/Abstract.php</observer_plugin_abstract>
-			<block_license>app/code/community/Fishpig/Wordpress/Addon/ACF/Block/System/Config/Form/Field/License.php</block_license>
-		</encode>
-	</fishpig>
 </config>
