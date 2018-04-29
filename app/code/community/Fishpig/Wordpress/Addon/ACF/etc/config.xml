@@ -51,4 +51,11 @@
 			</wordpress_term_get_meta_value>
 		</events>
 	</global>
+	<wordpress>
+		<core>
+			<modules>
+				<wp_addon_acf />
+			</modules>
+		</core>
+	</wordpress>
 </config>
