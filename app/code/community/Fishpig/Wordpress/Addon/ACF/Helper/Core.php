@@ -34,13 +34,13 @@ class Fishpig_Wordpress_Addon_ACF_Helper_Core extends Mage_Core_Helper_Abstract
 		
 		try {
 			if (($path = Mage::helper('wordpress')->getWordPressPath()) === false) {
-				throw new Exception($this->__("Can't read file '%s'.", Mage::helper('wordpress')->getRawWordPressPath() . 'wp-config.php'));
+				throw new Exception($this->__("Can't find file %s.", 'wp-config.php'));
 			}
 
 			$transFile = $path . 'wp-includes' . DS . 'l10n.php';
 			
 			if (!is_file($transFile)) {
-				throw new Exception($this->__("Can't read file '%s'.", $transFile));
+				throw new Exception($this->__("Can't find file '%s'.", $transFile));
 			}
 	
 			$content = file_get_contents($transFile);

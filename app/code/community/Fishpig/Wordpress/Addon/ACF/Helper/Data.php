@@ -33,30 +33,16 @@ class Fishpig_Wordpress_Addon_ACF_Helper_Data extends Fishpig_Wordpress_Helper_A
 	 */
 	public function getField($key, $scope = null)
 	{
-		$value = null;
-
-		try {
-			// Get the core helper
-			$coreHelper = Mage::helper('wp_addon_acf/core');
-			
-			// start the simulation
-			$coreHelper->startWordPressSimulation();
-
-			if (function_exists('get_field')) {
-				$value = get_field($key, $scope);
-			}
-		}
-		catch (Exception $e) {
-			Mage::helper('wordpress')->log($e->getMessage());
-		}
-		
-		// End the WordPress simulation
-		$coreHelper->endWordPressSimulation();
+		$value = Mage::helper('wp_addon_acf/core')->simulatedCallback(
+			function($key, $scope) {
+				return function_exists('get_field') ? get_field($key, $scope) : null;
+			}, array($key, $scope)
+		);
 		
 		return $this->_fixFieldReturn($value);
 	}
 
-	/**
+	/*
 	 *
 	 *
 	 */
@@ -72,7 +58,7 @@ class Fishpig_Wordpress_Addon_ACF_Helper_Data extends Fishpig_Wordpress_Helper_A
 		return $this;	
 	}
 
-	/**
+	/*
 	 *
 	 *
 	 */
