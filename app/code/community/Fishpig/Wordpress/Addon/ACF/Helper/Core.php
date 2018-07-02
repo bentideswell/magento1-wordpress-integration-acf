@@ -340,7 +340,7 @@ class Fishpig_Wordpress_Addon_ACF_Helper_Core extends Mage_Core_Helper_Abstract
 					$throw = isset($autoloader[0]) && $autoloader[0] instanceof Varien_Autoload;
 				}
 				
-				if (isset($autoloader[0], $autoloader[1])) {
+				if (is_array($autoloader) && isset($autoloader[0], $autoloader[1])) {
 					if ($autoloader[0] === 'Elementor\Autoloader' && $autoloader[1] === 'autoload') {
 						Elementor\Autoloader::run();
 						continue;
