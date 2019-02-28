@@ -42,6 +42,15 @@ class Fishpig_Wordpress_Addon_ACF_Helper_Data extends Fishpig_Wordpress_Helper_A
 		return $this->_fixFieldReturn($value);
 	}
 
+	/**
+	 *
+	 *
+	 */
+	public function getWidgetValue($key, $widgetId)
+	{
+		return $this->getField($key, 'widget_' . $widgetId);
+	}
+	
 	/*
 	 *
 	 *

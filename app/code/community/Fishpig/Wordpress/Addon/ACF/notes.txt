@@ -5,6 +5,9 @@
 # URL: https://fishpig.co.uk/magento/wordpress-integration/advanced-custom-fields/
 ##
 
+28/02/2019 - 2.0.0.18
+- Added support for widget fields.
+
 26/06/2018 - 2.0.0.11
 - Released update to fix bug with startWordPressSimulation
 
