@@ -1,6 +1,6 @@
 {
-    "name": "bentideswell/magento1-wordpress-integration-acf",
+    "name": "fishpig/magento1-wordpress-integration-acf",
     "description": "",
-    "version": "2.2.0.29",
+    "version": "2.2.0.30",
     "type": "magento-module"
 }

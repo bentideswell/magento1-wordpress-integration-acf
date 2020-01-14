@@ -2,7 +2,7 @@
 <config>
 	<modules>
 		<Fishpig_Wordpress_Addon_ACF>
-			<version>2.2.0.29</version>
+			<version>2.2.0.30</version>
 			<fishpig>
 				<name>Advanced Custom Fields</name>
 				<id>advanced-custom-field</id>
